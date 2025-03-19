@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSync - Recruiter Dashboard</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #34495e;
+            --light: #ecf0f1;
+            --accent: #9b59b6;
+            --recruiter: #00b894;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 2rem;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo-icon {
+            height: 67px;
+            animation: pulse 2s infinite;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--recruiter), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text span {
+            color: var(--accent);
+            -webkit-text-fill-color: var(--accent);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .sidebar-menu {
+            margin-top: 2rem;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+            transform: translateX(5px);
+        }
+
+        .menu-item.active {
+            background: var(--recruiter);
+            color: white;
+        }
+
+        .active-indicator {
+            position: absolute;
+            left: -2rem;
+            width: 4px;
+            height: 20px;
+            background: var(--recruiter);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background: #f5f7fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: var(--recruiter);
+            opacity: 0.1;
+            border-radius: 50%;
+            transform: translate(40%, -40%);
+        }
+
+        .stat-card h3 {
+            color: var(--dark);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--recruiter);
+        }
+
+        .recent-activity {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .recent-activity h2 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .activity-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255,255,255,0.3),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .company-overview {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        .company-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: contain;
+            background: #f8f9fa;
+            padding: 1rem;
+        }
+
+        .company-info h2 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .company-info p {
+            color: #666;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-add {
+            background: var(--recruiter);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn-add:hover {
+            background: #00a77d;
+        }
+
+        .btn-add::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .btn-add:hover::before {
+            left: 100%;
+        }
+
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .job-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .job-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--recruiter);
+        }
+
+        .job-card h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .job-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .job-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .job-stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .job-stat-value {
+            font-weight: bold;
+            color: var(--recruiter);
+        }
+
+        .job-stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .company-logo-wrapper {
+            position: relative;
+        }
+
+        .company-badge {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .badge {
+            background: #f0f2f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--dark);
+            margin-right: 8px;
+        }
+
+        .company-metrics {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--recruiter);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .candidate-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .candidate-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .match-score {
+            background: var(--recruiter);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: #f0f2f5;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 4px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+            animation: modalFade 0.3s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--recruiter);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .candidate-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .candidate-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .candidate-stat {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            margin-top: 1rem;
+        }
+
+        .recommendation-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .recommendation-card::before {
+            content: '⭐';
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .highlight-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        .achievement-list {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .achievement-item::before {
+            content: '✓';
+            color: var(--recruiter);
+            font-weight: bold;
+        }
+
+        .section-subtitle {
+            color: #666;
+            margin: -0.5rem 0 1.5rem 0;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="logo.png" alt="Logo" class="logo-icon">
+            </div>
+            <ul class="sidebar-menu" id="sidebar-menu">
+                <!-- Menu items will be populated by JavaScript -->
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/40" alt="User Avatar" class="user-avatar" id="user-avatar">
+                    <span id="user-name"></span>
+                </div>
+            </div>
+            <div id="dashboard-content">
+                <!-- Dashboard content will be loaded here -->
+            </div>
+            <div class="dashboard-content">
+                <div class="company-overview">
+                    <div class="company-header">
+                        <div class="company-logo-wrapper">
+                            <img src="https://dummyimage.com/80x80/000/fff" alt="Company Logo" class="company-logo">
+                            <div class="company-badge">Premium</div>
+                        </div>
+                        <div class="company-info">
+                            <h2 id="company-name">StartupCo</h2>
+                            <p id="company-details">
+                                <span class="badge">Tech Startup</span>
+                                <span class="badge">50-100 employees</span>
+                                <span class="badge">San Francisco, CA</span>
+                            </p>
+                            <div class="company-metrics">
+                                <div class="metric">
+                                    <span class="metric-value">4.8</span>
+                                    <span class="metric-label">Rating</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value">98%</span>
+                                    <span class="metric-label">Response Rate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Open Positions</h3>
+                        <div class="stat-value">8</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Applicants</h3>
+                        <div class="stat-value">156</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Shortlisted</h3>
+                        <div class="stat-value">24</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Interviews This Week</h3>
+                        <div class="stat-value">12</div>
+                    </div>
+                </div>
+
+                <div class="job-listings">
+                    <div class="section-header">
+                        <h2>Active Job Listings</h2>
+                        <button class="btn-add">+ New Job Post</button>
+                    </div>
+                    <div class="jobs-grid" id="jobs-list">
+                        <!-- Jobs will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="matched-candidates">
+                    <div class="section-header">
+                        <h2>Top Matched Candidates</h2>
+                        <button class="btn-add">View All Matches</button>
+                    </div>
+                    <div class="candidates-grid" id="candidates-list"></div>
+                </div>
+
+                <!-- Replace the old recommended-profiles section with this -->
+                <div class="recommended-profiles">
+                    <div class="section-header">
+                        <h2>🌟 Top Talent</h2>
+                    </div>
+                    <p class="section-subtitle">Highly qualified candidates matching your requirements</p>
+                    <div class="recommendations-grid" id="recommendations-list"></div>
+                </div>
+
+                <div class="recent-activity">
+                    <h2>Recent Activity</h2>
+                    <div class="activity-list" id="activity-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this modal for candidate details -->
+    <div id="candidateModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="candidateDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        // Add this before your existing jobListings array
+        const sidebarItems = [
+            { icon: '📊', title: 'Dashboard', isActive: true },
+            { icon: '💼', title: 'Job Postings' },
+            { icon: '👥', title: 'Candidates' },
+            { icon: '📅', title: 'Interviews' },
+            { icon: '📈', title: 'Analytics' },
+            { icon: '⚡', title: 'Quick Hire' },
+            { icon: '💬', title: 'Messages' },
+            { icon: '⭐', title: 'Saved' },
+            { icon: '⚙️', title: 'Settings' },
+            { icon: '🔧', title: 'Dummy Button 1' }, // Dummy button 1
+            { icon: '🔧', title: 'Dummy Button 2' }  // Dummy button 2
+        ];
+
+        // Add more recent activities
+        const recentActivities = [
+            {
+                icon: '🎯',
+                text: 'New perfect match: Senior React Developer',
+                time: '10 minutes ago',
+                highlight: true
+            },
+            {
+                icon: '📅',
+                text: 'Interview scheduled with Emma Wilson',
+                time: '1 hour ago'
+            },
+            {
+                icon: '💬',
+                text: 'Message received from David Kim',
+                time: '2 hours ago'
+            },
+            {
+                icon: '👤',
+                text: 'New application for DevOps position',
+                time: '3 hours ago'
+            },
+            {
+                icon: '⭐',
+                text: 'Candidate shortlisted by Team Lead',
+                time: '4 hours ago'
+            },
+            {
+                icon: '📝',
+                text: 'Updated job description for UI Designer',
+                time: '5 hours ago'
+            }
+        ];
+
+        // Add top talent profiles
+        const topTalentProfiles = [
+            {
+                name: 'Alex Rivera',
+                title: 'Senior Cloud Architect',
+                highlight: 'Ex-Microsoft',
+                skills: ['AWS', 'Azure', 'Kubernetes', 'Terraform'],
+                matchScore: 99,
+                avatar: 'https://i.pravatar.cc/150?img=7',
+                achievements: [
+                    'Led cloud migration for Fortune 500 company',
+                    'AWS Solutions Architect Professional',
+                    'Speaker at Cloud Summit 2024'
+                ]
+            },
+            {
+                name: 'Sarah Kim',
+                title: 'AI/ML Engineer',
+                highlight: 'Stanford AI Researcher',
+                skills: ['Python', 'TensorFlow', 'PyTorch', 'Computer Vision'],
+                matchScore: 97,
+                avatar: 'https://i.pravatar.cc/150?img=8',
+                achievements: [
+                    'Published in Nature Machine Intelligence',
+                    'Developed AI model with 99.9% accuracy',
+                    'PhD in Machine Learning'
+                ]
+            }
+        ];
+
+        // Replace the existing window.onload function with this corrected version
+        window.onload = function() {
+            // Set a dummy user if none exists
+            let user = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (!user) {
+                user = {
+                    name: 'Dummy User',
+                    avatar: 'https://i.pravatar.cc/150',
+                    company: 'Demo Company'
+                };
+                // Optional: Save dummy user in sessionStorage
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+            }
+
+            // Update user profile
+            document.getElementById('user-name').textContent = user.name;
+            document.getElementById('user-avatar').src = user.avatar;
+            document.getElementById('company-name').textContent = user.company;
+
+            // Load all dashboard sections
+            loadSidebar();
+            loadJobs();
+            loadActivities();
+            loadCandidates();
+            loadRecommendations();
+            loadTopTalent();
+
+            // Add modal close handlers
+            const modal = document.getElementById('candidateModal');
+            const closeBtn = document.querySelector('.close-modal');
+
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            };
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            };
+        };
+
+        // Add these new job listings
+        const jobListings = [
+            {
+                title: 'Senior Frontend Developer',
+                department: 'Engineering',
+                location: 'Remote',
+                type: 'Full-time',
+                salary: '$120k - $150k',
+                applicants: 45,
+                shortlisted: 8,
+                interviews: 3
+            },
+            {
+                title: 'Product Manager',
+                department: 'Product',
+                location: 'San Francisco, CA',
+                type: 'Full-time',
+                salary: '$130k - $160k',
+                applicants: 32,
+                shortlisted: 6,
+                interviews: 4
+            },
+            {
+                title: 'DevOps Engineer',
+                department: 'Engineering',
+                location: 'Remote',
+                type: 'Full-time',
+                salary: '$115k - $145k',
+                applicants: 28,
+                shortlisted: 5,
+                interviews: 2
+            },
+            {
+                title: 'UI/UX Designer',
+                department: 'Design',
+                location: 'Hybrid',
+                type: 'Full-time',
+                salary: '$90k - $120k',
+                applicants: 38,
+                shortlisted: 7,
+                interviews: 3
+            }
+        ];
+
+        // Add more candidates
+        const matchedCandidates = {
+            'Senior Frontend Developer': [
+                {
+                    name: 'Emily Chen',
+                    title: 'Frontend Developer',
+                    experience: '5 years',
+                    skills: ['React', 'TypeScript', 'GraphQL'],
+                    matchScore: 95,
+                    avatar: 'https://i.pravatar.cc/150?img=1',
+                    location: 'San Francisco, CA',
+                    currentCompany: 'TechCorp',
+                    salary: '$130k/year',
+                    availability: 'In 2 weeks',
+                    education: 'BS Computer Science',
+                    languages: ['English', 'Mandarin'],
+                    portfolio: 'github.com/emilychen'
+                },
+                {
+                    name: 'David Kim',
+                    title: 'Senior UI Developer',
+                    experience: '7 years',
+                    skills: ['Vue.js', 'React', 'AWS'],
+                    matchScore: 88,
+                    avatar: 'https://i.pravatar.cc/150?img=2',
+                    location: 'Remote',
+                    currentCompany: 'StartupX',
+                    salary: '$140k/year',
+                    availability: 'Immediate',
+                    education: 'MS Software Engineering',
+                    languages: ['English', 'Korean'],
+                    portfolio: 'davidkim.dev'
+                }
+            ],
+            'UI/UX Designer': [
+                {
+                    name: 'Sophie Martinez',
+                    title: 'Senior UX Designer',
+                    experience: '6 years',
+                    skills: ['Figma', 'Adobe XD', 'User Research'],
+                    matchScore: 97,
+                    avatar: 'https://i.pravatar.cc/150?img=4',
+                    location: 'Los Angeles, CA',
+                    currentCompany: 'DesignCo',
+                    salary: '$110k/year',
+                    availability: 'In 1 month',
+                    education: 'BFA Design',
+                    languages: ['English', 'Spanish'],
+                    portfolio: 'behance.net/sophiem'
+                }
+            ]
+        };
+
+        // Add this after your existing matchedCandidates object
+        const recommendedProfiles = [
+            {
+                name: 'James Wilson',
+                title: 'Full Stack Developer',
+                experience: '8 years',
+                skills: ['React', 'Node.js', 'MongoDB', 'AWS'],
+                matchScore: 98,
+                avatar: 'https://i.pravatar.cc/150?img=5',
+                location: 'New York, NY',
+                highlight: 'Previously at Google',
+                salary: '$145k/year',
+                availability: 'Immediate',
+                languages: ['English'],
+                education: 'MS Computer Science, MIT',
+                portfolio: 'github.com/jameswilson',
+                achievements: [
+                    'Led team of 8 developers at Google',
+                    'Built scalable systems handling 1M+ users',
+                    'Published 3 technical papers'
+                ]
+            },
+            {
+                name: 'Maria Garcia',
+                title: 'Senior Backend Engineer',
+                experience: '6 years',
+                skills: ['Python', 'Django', 'PostgreSQL', 'Docker'],
+                matchScore: 96,
+                avatar: 'https://i.pravatar.cc/150?img=6',
+                location: 'Remote',
+                highlight: 'Amazon Web Services Certified',
+                salary: '$135k/year',
+                availability: '2 weeks',
+                languages: ['English', 'Spanish'],
+                education: 'BS Computer Engineering, Stanford',
+                portfolio: 'mariagarcia.dev',
+                achievements: [
+                    'Improved system performance by 300%',
+                    'AWS Certified Solutions Architect',
+                    'Speaker at PyCon 2024'
+                ]
+            }
+        ];
+
+        function loadJobs() {
+            const jobsList = document.getElementById('jobs-list');
+            jobListings.forEach(job => {
+                const div = document.createElement('div');
+                div.className = 'job-card';
+                div.innerHTML = `
+                    <h3>${job.title}</h3>
+                    <div class="job-meta">
+                        <div>${job.department} • ${job.location}</div>
+                        <div>${job.type} • ${job.salary}</div>
+                    </div>
+                    <div class="job-stats">
+                        <div class="job-stat">
+                            <div class="job-stat-value">${job.applicants}</div>
+                            <div class="job-stat-label">Applicants</div>
+                        </div>
+                        <div class="job-stat">
+                            <div class="job-stat-value">${job.shortlisted}</div>
+                            <div class="job-stat-label">Shortlisted</div>
+                        </div>
+                        <div class="job-stat">
+                            <div class="job-stat-value">${job.interviews}</div>
+                            <div class="job-stat-label">Interviews</div>
+                        </div>
+                    </div>
+                `;
+                jobsList.appendChild(div);
+            });
+        }
+
+        // Add more activities
+        const activities = [
+            {
+                icon: '👤',
+                text: 'New application received for Senior Developer position',
+                time: '2 hours ago'
+            },
+            {
+                icon: '📅',
+                text: 'Interview scheduled with React Developer candidate',
+                time: '4 hours ago'
+            },
+            {
+                icon: '✏️',
+                text: 'Updated job posting for UI/UX Designer',
+                time: '6 hours ago'
+            },
+            {
+                icon: '✉️',
+                text: 'Message received from Emily Chen',
+                time: '1 day ago'
+            },
+            {
+                icon: '🎯',
+                text: 'New candidate match found for DevOps position',
+                time: '1 day ago'
+            }
+        ];
+
+        function loadActivities() {
+            const activityList = document.getElementById('activity-list');
+            activities.forEach(activity => {
+                const div = document.createElement('div');
+                div.className = 'activity-item';
+                div.innerHTML = `
+                    <div class="activity-icon">${activity.icon}</div>
+                    <div class="activity-content">
+                        <div>${activity.text}</div>
+                        <small style="color: #666;">${activity.time}</small>
+                    </div>
+                `;
+                activityList.appendChild(div);
+            });
+        }
+
+        // Add this to your existing JavaScript
+        function loadCandidates() {
+            const candidatesList = document.getElementById('candidates-list');
+            Object.entries(matchedCandidates).forEach(([jobTitle, candidates]) => {
+                candidates.forEach(candidate => {
+                    const div = document.createElement('div');
+                    div.className = 'candidate-card';
+                    div.onclick = () => showCandidateDetails(candidate);
+                    div.innerHTML = `
+                        <img src="${candidate.avatar}" alt="${candidate.name}" class="candidate-avatar">
+                        <div class="candidate-info">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <h3>${candidate.name}</h3>
+                                <span class="match-score">${candidate.matchScore}% Match</span>
+                            </div>
+                            <p>${candidate.title}</p>
+                            <p style="color: #666; font-size: 0.9rem;">${candidate.experience} • ${candidate.location}</p>
+                            <div style="margin-top: 0.5rem;">
+                                ${candidate.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                    candidatesList.appendChild(div);
+                });
+            });
+        }
+
+        // Add this to your existing JavaScript
+        function loadRecommendations() {
+            const recommendationsList = document.getElementById('recommendations-list');
+            recommendedProfiles.forEach(profile => {
+                const div = document.createElement('div');
+                div.className = 'recommendation-card';
+                div.onclick = () => showCandidateDetails(profile);
+                div.innerHTML = `
+                    <div class="profile-header">
+                        <img src="${profile.avatar}" alt="${profile.name}" class="candidate-avatar">
+                        <div class="profile-info">
+                            <h3>${profile.name}</h3>
+                            <p>${profile.title}</p>
+                            <div class="highlight-badge">${profile.highlight}</div>
+                        </div>
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        ${profile.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                    <div class="achievement-list">
+                        ${profile.achievements.map(achievement => `
+                            <div class="achievement-item">${achievement}</div>
+                        `).join('')}
+                    </div>
+                    <div style="text-align: right; margin-top: 1rem;">
+                        <span class="match-score">${profile.matchScore}% Match</span>
+                    </div>
+                `;
+                recommendationsList.appendChild(div);
+            });
+        }
+
+        // Update the showCandidateDetails function
+        function showCandidateDetails(candidate) {
+            const modal = document.getElementById('candidateModal');
+            const detailsDiv = document.getElementById('candidateDetails');
+            
+            detailsDiv.innerHTML = `
+                <div class="candidate-detail-header">
+                    <img src="${candidate.avatar}" alt="${candidate.name}" style="width: 100px; height: 100px; border-radius: 50%;">
+                    <div>
+                        <h2>${candidate.name}</h2>
+                        <p>${candidate.title}</p>
+                        <span class="match-score">${candidate.matchScore}% Match</span>
+                    </div>
+                </div>
+                <div class="candidate-stats">
+                    <div class="candidate-stat">
+                        <div class="stat-value">${candidate.experience}</div>
+                        <div class="stat-label">Experience</div>
+                    </div>
+                    <div class="candidate-stat">
+                        <div class="stat-value">${candidate.salary}</div>
+                        <div class="stat-label">Expected Salary</div>
+                    </div>
+                    <div class="candidate-stat">
+                        <div class="stat-value">${candidate.availability}</div>
+                        <div class="stat-label">Available</div>
+                    </div>
+                </div>
+                <div style="margin: 1.5rem 0;">
+                    <h3>Skills</h3>
+                    <div style="margin-top: 0.5rem;">
+                        ${candidate.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                </div>
+                <div style="margin: 1.5rem 0;">
+                    <h3>Additional Information</h3>
+                    <div style="margin-top: 0.5rem;">
+                        <p><strong>Education:</strong> ${candidate.education}</p>
+                        <p><strong>Languages:</strong> ${candidate.languages.join(', ')}</p>
+                        <p><strong>Portfolio:</strong> <a href="https://${candidate.portfolio}" target="_blank">${candidate.portfolio}</a></p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="btn-add">Schedule Interview</button>
+                    <button class="btn-add" style="background: #f0f2f5; color: var(--dark);">Download Resume</button>
+                    <button class="btn-add" style="background: var(--primary);">Send Message</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // Update the sidebar population in window.onload
+        function loadSidebar() {
+            const sidebarMenu = document.getElementById('sidebar-menu');
+            sidebarItems.forEach(item => {
+                const li = document.createElement('li');
+                li.className = `menu-item ${item.isActive ? 'active' : ''}`;
+                li.innerHTML = `
+                    ${item.icon} 
+                    <span>${item.title}</span>
+                    ${item.isActive ? '<div class="active-indicator"></div>' : ''}
+                `;
+                li.onclick = () => handleMenuClick(item.title);
+                sidebarMenu.appendChild(li);
+            });
+        }
+
+        function handleMenuClick(title) {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                if(item.textContent.includes(title)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

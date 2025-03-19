@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSync - Login</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #34495e;
+            --light: #ecf0f1;
+            --accent: #9b59b6;
+            --recruiter: #00b894;
+            --jobseeker: #3498db;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background-color: white;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+        
+        .logo {
+        height: 80px;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+        
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            color: var(--dark);
+        }
+        
+        .tab-btn.active {
+            opacity: 1;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab-btn[data-role="recruiter"].active {
+            border-bottom-color: var(--recruiter);
+        }
+        
+        .tab-btn[data-role="jobseeker"].active {
+            border-bottom-color: var(--jobseeker);
+        }
+        
+        .auth-content {
+            display: none;
+        }
+        
+        .auth-content.active {
+            display: block;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-header p {
+            color: #777;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-recruiter {
+            background-color: var(--recruiter);
+            color: white;
+        }
+        
+        .btn-recruiter:hover {
+            background-color: #05987b;
+        }
+        
+        .btn-jobseeker {
+            background-color: var(--jobseeker);
+            color: white;
+        }
+        
+        .btn-jobseeker:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-github {
+            background-color: #24292f;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .btn-github:hover {
+            background-color: #2c333a;
+        }
+
+        .github-btn-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .demo-accounts {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .demo-accounts h3 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .demo-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-card img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .demo-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .demo-info strong {
+            color: #24292f;
+        }
+
+        .demo-info span {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            width: auto;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #777;
+        }
+        
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .social-login {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .social-login p {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .social-login p::before, .social-login p::after {
+            content: "";
+            display: inline-block;
+            width: 30%;
+            height: 1px;
+            background-color: #ddd;
+            position: absolute;
+            top: 50%;
+        }
+        
+        .social-login p::before {
+            left: 0;
+        }
+        
+        .social-login p::after {
+            right: 0;
+        }
+        
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .social-btn:hover {
+            background-color: #eee;
+        }
+        
+        .landing-choice {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .landing-header {
+            margin-bottom: 3rem;
+        }
+        
+        .landing-header h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .landing-header p {
+            color: #777;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .choice-cards {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+        }
+        
+        .choice-card {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        
+        .choice-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .choice-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .recruiter-card .choice-icon {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--recruiter);
+        }
+        
+        .jobseeker-card .choice-icon {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--jobseeker);
+        }
+        
+        .choice-card h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .choice-card p {
+            color: #777;
+            margin-bottom: 1.5rem;
+        }
+        
+        .choice-card .btn {
+            margin-top: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .choice-cards {
+                flex-direction: column;
+            }
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .auth-divider::before {
+            left: 0;
+        }
+
+        .auth-divider::after {
+            right: 0;
+        }
+
+        .auth-divider span {
+            background-color: white;
+            padding: 0 1rem;
+            color: #777;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="logo.png" alt="SkillSync Logo" style="height: 40px;">
+                </a>
+                <div class="nav-links">
+                    <a href="#" class="nav-link">About</a>
+                    <a href="#" class="nav-link">Features</a>
+                    <a href="#" class="nav-link">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="landing-choice" id="landing-choice">
+            <div class="landing-header" ,style="padding-bottom: 10px;">
+                <h1>Join SkillSync</h1>
+                <p>Select your role to create an account or sign in. SkillSync connects job seekers with employers based on real skills and proven abilities.</p>
+            </div>
+            
+            <div class="choice-cards">
+                <div class="choice-card recruiter-card">
+                    <div class="choice-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                    </div>
+                    <h3>I'm a Recruiter</h3>
+                    <p>Find skilled candidates based on proven abilities rather than just traditional credentials.</p>
+                    <button class="btn btn-recruiter" onclick="showLogin('recruiter')">Continue as Recruiter</button>
+                </div>
+                
+                <div class="choice-card jobseeker-card">
+                    <div class="choice-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h3>I'm a Job Seeker</h3>
+                    <p>Showcase your skills and get hired based on what you can do, not just your formal education.</p>
+                    <button class="btn btn-jobseeker" onclick="showLogin('jobseeker')">Continue as Job Seeker</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-container" id="auth-container" style="display: none;">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="login" data-role="">Login</button>
+                <button class="tab-btn" data-tab="signup" data-role="">Sign Up</button>
+            </div>
+            
+            <div class="auth-content active" id="login-content">
+                <div class="auth-header">
+                    <h2 id="login-title">Login</h2>
+                    <p id="login-subtitle">Access your SkillSync account</p>
+                </div>
+                
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="login-btn">Login</button>
+                </form>
+
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+
+                <button class="btn btn-github" id="github-login-btn">
+                    <div class="github-btn-content">
+                        <svg height="24" viewBox="0 0 16 16" width="24">
+                            <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    </svg>
+                    <span>Continue with GitHub</span>
+                </div>
+            </button>
+        </div>
+            
+            <div class="auth-content" id="signup-content">
+                <div class="auth-header">
+                    <h2 id="signup-title">Create Your Account</h2>
+                    <p id="signup-subtitle">Join SkillSync to showcase your skills</p>
+                </div>
+                
+                <form>
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" placeholder="John Doe" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="••••••••" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" id="signup-btn">Create Account</button>
+                </form>
+                
+                <div class="social-login">
+                    <p>Or sign up with</p>
+                    <div class="social-buttons">
+                        <div class="social-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                            </svg>
+                        </div>
+                        <div class="social-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                                <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                            </svg>
+                        </div>
+                        <div class="social-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                <rect x="2" y="9" width="4" height="12"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="auth-footer">
+                <button onclick="backToChoice()" style="background: none; border: none; cursor: pointer; color: var(--primary);">
+                    ← Back to Role Selection
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Functions to toggle between login and role selection screens
+        function showLogin(role) {
+            document.getElementById('landing-choice').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'block';
+            
+            // Update button classes and text based on role
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            // Set the active role for tab styling
+            tabBtns.forEach(btn => {
+                btn.setAttribute('data-role', role);
+            });
+            
+            if (role === 'recruiter') {
+                loginBtn.className = 'btn btn-recruiter';
+                signupBtn.className = 'btn btn-recruiter';
+                
+                document.getElementById('login-title').innerText = 'Recruiter Login';
+                document.getElementById('login-subtitle').innerText = 'Access your SkillSync recruiter account';
+                
+                document.getElementById('signup-title').innerText = 'Create Recruiter Account';
+                document.getElementById('signup-subtitle').innerText = 'Join SkillSync to find skilled talent';
+            } else {
+                loginBtn.className = 'btn btn-jobseeker';
+                signupBtn.className = 'btn btn-jobseeker';
+                
+                document.getElementById('login-title').innerText = 'Job Seeker Login';
+                document.getElementById('login-subtitle').innerText = 'Access your SkillSync profile';
+                
+                document.getElementById('signup-title').innerText = 'Create Job Seeker Account';
+                document.getElementById('signup-subtitle').innerText = 'Join SkillSync to showcase your skills';
+            }
+        }
+        
+        function backToChoice() {
+            document.getElementById('landing-choice').style.display = 'flex';
+            document.getElementById('auth-container').style.display = 'none';
+        }
+        
+        // Tab functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.auth-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons and contents
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked button
+                btn.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = btn.getAttribute('data-tab') + '-content';
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Add form submission handling (mock for prototype)
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const role = document.querySelector('.tab-btn.active').getAttribute('data-role');
+            alert('Login functionality would be implemented here in the full version.');
+            if (role === 'recruiter') {
+                window.location.href = 'dashboard-recruiter.html';
+            } else {
+                window.location.href = 'dashboard-jobseeker.html';
+            }
+        });
+    
+        // Demo user data
+        const demoUsers = {
+            recruiter: {
+                username: 'tech_recruiter',
+                name: 'Sarah Thompson',
+                role: 'Technical Recruiter',
+                company: 'TechHire Solutions',
+                avatar: 'https://avatars.githubusercontent.com/u/demo1',
+                github: {
+                    followers: 245,
+                    repositories: 15,
+                    joined: '2020'
+                }
+            },
+            developer: {
+                username: 'dev_seeker',
+                name: 'Alex Chen',
+                role: 'Full Stack Developer',
+                skills: ['JavaScript', 'React', 'Node.js'],
+                avatar: 'https://avatars.githubusercontent.com/u/demo2',
+                github: {
+                    followers: 578,
+                    repositories: 32,
+                    joined: '2019'
+                }
+            }
+        };
+
+        // GitHub login button handler
+        document.getElementById('github-login-btn').addEventListener('click', function() {
+            // Simulate GitHub OAuth flow
+            this.disabled = true;
+            this.innerHTML = '<div class="github-btn-content"><div class="spinner"></div><span>Authenticating...</span></div>';
+            
+            // Simulate API delay
+            setTimeout(() => {
+                window.location.href = 'dashboard-jobseeker.html';
+            }, 1500);
+        });
+
+        // Demo login handler
+        function loginAsDemo(userType) {
+            const user = demoUsers[userType];
+            
+            // Show loading state
+            document.getElementById('login-content').innerHTML = `
+                <div class="auth-header">
+                    <div class="spinner"></div>
+                    <p>Logging in as ${user.name}...</p>
+                </div>
+            `;
+            
+            // Store demo user data in sessionStorage
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+            
+            // Redirect after delay
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+
+        // Add inside your existing <script> tag
+        const demoAccounts = {
+            recruiter1: {
+                name: 'Sarah Thompson',
+                email: 'recruiter@techcorp.com',
+                password: 'demo123',
+                role: 'recruiter',
+                company: 'TechCorp',
+                title: 'Senior Tech Recruiter',
+                menu: [
+                    { title: 'Dashboard', icon: '📊' },
+                    { title: 'Job Postings', icon: '📝' },
+                    { title: 'Candidates', icon: '👥' },
+                    { title: 'Interviews', icon: '🗣️' },
+                    { title: 'Analytics', icon: '📈' }
+                ]
+            },
+            recruiter2: {
+                name: 'Michael Rodriguez',
+                email: 'hr@startupco.com',
+                password: 'demo123',
+                role: 'recruiter',
+                company: 'StartupCo',
+                title: 'HR Manager',
+                menu: [
+                    { title: 'Dashboard', icon: '📊' },
+                    { title: 'Job Postings', icon: '📝' },
+                    { title: 'Talent Pool', icon: '🎯' },
+                    { title: 'Team', icon: '👥' },
+                    { title: 'Reports', icon: '📊' }
+                ]
+            },
+            seeker1: {
+                name: 'Alex Chen',
+                email: 'dev@gmail.com',
+                password: 'demo123',
+                role: 'jobseeker',
+                title: 'Frontend Developer',
+                skills: ['React', 'JavaScript', 'CSS'],
+                menu: [
+                    { title: 'Profile', icon: '👤' },
+                    { title: 'Job Search', icon: '🔍' },
+                    { title: 'Applications', icon: '📋' },
+                    { title: 'Skills Tests', icon: '💡' },
+                    { title: 'Messages', icon: '✉️' }
+                ]
+            },
+            seeker2: {
+                name: 'Emma Wilson',
+                email: 'backend@gmail.com',
+                password: 'demo123',
+                role: 'jobseeker',
+                title: 'Backend Developer',
+                skills: ['Python', 'Node.js', 'SQL'],
+                menu: [
+                    { title: 'Profile', icon: '👤' },
+                    { title: 'Job Matches', icon: '🎯' },
+                    { title: 'Applications', icon: '📋' },
+                    { title: 'Projects', icon: '💻' },
+                    { title: 'Messages', icon: '✉️' }
+                ]
+            }
+        };
+
+        // Replace the existing loginWithDemo function
+        function loginWithDemo(accountType) {
+            const account = demoAccounts[accountType];
+            
+            // Show loading state
+            document.getElementById('login-content').innerHTML = `
+                <div class="auth-header">
+                    <div class="spinner"></div>
+                    <p>Logging in as ${account.name}...</p>
+                </div>
+            `;
+            
+            // Store demo user data in sessionStorage
+            sessionStorage.setItem('currentUser', JSON.stringify(account));
+            
+            // Redirect to appropriate dashboard
+            setTimeout(() => {
+                const dashboardPage = account.role === 'recruiter' 
+                    ? 'dashboard-recruiter.html' 
+                    : 'dashboard-jobseeker.html';
+                window.location.href = dashboardPage;
+            }, 1500);
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Load demo accounts
+            const account = demoAccounts[email];
+            
+            if (account && account.password === password) {
+                // Show loading state
+                document.getElementById('login-form').innerHTML = `
+                    <div class="auth-header">
+                        <div class="spinner"></div>
+                        <p>Logging in as ${account.name}...</p>
+                    </div>
+                `;
+                
+                // Store user data in sessionStorage
+                sessionStorage.setItem('currentUser', JSON.stringify(account));
+                
+                // Redirect to appropriate dashboard
+                setTimeout(() => {
+                    const dashboardPage = account.role === 'recruiter' 
+                        ? 'dashboard-recruiter.html' 
+                        : 'dashboard-jobseeker.html';
+                    window.location.href = dashboardPage;
+                }, 1500);
+            } else {
+                alert('Invalid email or password. Try these demo accounts:\n\nRecruiter: recruiter@techcorp.com\nJob Seeker: dev@gmail.com\nPassword: demo123');
+            }
+        }
+    </script>
+    <script src="js/demo-accounts.js"></script>
+</body>
+</html>
